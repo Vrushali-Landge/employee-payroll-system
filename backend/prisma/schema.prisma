@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  name     String
+  role     String
+}
+model Employee {
+  id     Int      @id @default(autoincrement())
+  name   String
+  city   String
+  state  String
+  mobile String
+  dob    DateTime
+  doj    DateTime
+
+  
+  salaries Salary[]
+  grades   EmployeeGrade[]
+}
+
+model EmployeeGrade {
+  id      Int @id @default(autoincrement())
+  empId   Int
+  deptId  Int
+  gradeId Int
+
+  employee Employee   @relation(fields: [empId], references: [id])
+  grade    PayGrade   @relation(fields: [gradeId], references: [id])
+  dept     Department @relation(fields: [deptId], references: [id])
+}
+
+model Salary {
+  id    Int    @id @default(autoincrement())
+  empId Int
+  month String
+  year  String
+
+  basic Int
+  da    Int
+  ta    Int
+  hra   Int
+  ma    Int
+  bonus Int
+  pf    Int
+  pt    Int
+
+  gross Int
+  total Int
+
+
+  employee Employee @relation(fields: [empId], references: [id])
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  // revere relation
+  employees EmployeeGrade[]
+}
+
+model PayGrade {
+  id    Int    @id @default(autoincrement())
+  name  String
+  basic Int
+  da    Int
+  ta    Int
+  hra   Int
+  ma    Int
+  bonus Int
+  pf    Int
+  pt    Int
+
+ 
+  employees EmployeeGrade[]
+}
